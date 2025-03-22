@@ -31,7 +31,8 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(x, y))
         self.vel_y = 0
         self.on_ground = False
-        self.health = 3
+        self.max_health = 3
+        self.health = self.max_health
         self.jump_count = 0
         self.max_jump_count = 2  # 最多兩段跳
         self.invincible = False

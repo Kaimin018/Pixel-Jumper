@@ -63,8 +63,14 @@ def draw_game_screen():
 
     screen.blit(player.image, (player.rect.x + scroll[0], player.rect.y + scroll[1]))
 
-    for i in range(player.health):
-        pygame.draw.rect(screen, RED, (10 + i * 30, 10, 20, 20))
+    for i in range(player.max_health):
+        x = 10 + i * 30
+        y = 10
+        pygame.draw.rect(screen, GRAY, (x, y, 20, 20), 2)  # 邊框寬度=2
+        # 畫實心血量
+        if i < player.health:
+            pygame.draw.rect(screen, RED, (x + 2, y + 2, 16, 16)) 
+
 
     draw_text(f"Distance: {max_distance} m", WIDTH - 250, 10, BLACK)
 
