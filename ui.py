@@ -184,9 +184,9 @@ def show_game_over(distance, total_time, highscores):
                     pygame.quit()
                     exit()
                 if event.key == pygame.K_b:
-                    show_main_menu()
+                    return "menu"
                 if event.key == pygame.K_r:
-                    return
+                    return "restart"
 
 
 def show_pause_menu():

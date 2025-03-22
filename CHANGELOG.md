@@ -4,39 +4,54 @@
 
 ## [v0.2.1] - 2025-03-22
 
-### 🛠 Improvements
-- Prevent scores from being recorded to the leaderboard when Debug Mode is active.
-- Added in-game message to indicate when a score is not saved due to Debug Mode.
-
 ### ✨ Features
-- Rebuilt procedural level generation system using `Tile` and `Obstacle` sprite-based architecture.
-- Added dynamic platform width and height variation based on difficulty level.
-- Introduced floating platforms and stair-like structures to enrich terrain diversity.
+- feat: Add instant restart option (press `R` on Game Over screen)
+- Rebuilt procedural level generation using `Tile` and `Obstacle` sprite architecture
+- Introduced dynamic platform width/height based on difficulty
+- Added floating platforms and stair-like structures for varied terrain
 
 ### 🛠 Improvements
-- Implemented `occupied_tiles` tracking system to prevent overlapping between platforms, stairs, and obstacles.
-- Refactored all tile generation functions (`add_base_platform`, `add_floating_platforms`, `add_stairs`) for modularity and consistency.
-- Improved obstacle placement logic to ensure obstacles are not placed at walkable platform level.
-- Removed outdated `level[][]` array-based tile structure in favor of full sprite group management.
+- Prevented score from being saved to leaderboard when Debug Mode is active
+- Show in-game message when score is excluded due to Debug Mode
+- Implemented `occupied_tiles` system to avoid overlaps between terrain and obstacles
+- Refactored platform generation into modular functions (`add_base_platform`, `add_stairs`, `add_floating_platforms`)
+- Replaced legacy 2D `level[][]` array with sprite groups (`tiles`, `obstacles`)
+- Improved obstacle placement logic to avoid placing them on walkable tiles
 
 ### 🐞 Bug Fixes
-- Fixed issue where player could stand on obstacles due to overlapping tile placement.
+- Fixed issue where player could stand on obstacles due to overlap with tile rects
+
+---
 
 ## [v0.1.0] - 2025-03-22
-- feat: 實作角色移動、跳躍、雙跳邏輯
-- feat: 隨機生成平台與初步障礙（刺）
-- feat: 遊戲暫停 / 結束 / 重新開始功能
-- feat: 角色死亡與生命值
-- feat: 背景音樂與音效初步整合
-- feat: 高分儲存、排行榜顯示
-- feat: ESC 暫停、Q 離開、R 重新開始控制鍵位
-- chore: 新增 .gitignore
+
+### ✨ Features
+- feat: Implemented player movement, jump, and double jump
+- feat: Randomly generate platforms and basic obstacles
+- feat: Pause / Game Over / Restart mechanics
+- feat: Health system and life loss handling
+- feat: Background music & basic SFX support
+- feat: High score saving and top 5 leaderboard
+- feat: Key bindings: `ESC` to pause, `Q` to quit, `R` to restart
+- chore: Added `.gitignore`
+
+---
 
 ## [v0.0.3] - 2025-03-22
-- 加入不同背景音樂
+
+### ✨ Features
+- Added different background music per game state
+
+---
 
 ## [v0.0.2] - 2025-03-21
-- 加入主畫面、結算畫面、暫停等
 
-## [v0.0.1] - 初始版本
-- 完成角色跳躍與平台判定
+### ✨ Features
+- Added Main Menu, Game Over screen, Pause Menu
+
+---
+
+## [v0.0.1] - 2025-03-21
+
+### ✨ Features
+- Initial version: implemented player jump and basic platform collisions

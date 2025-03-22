@@ -69,88 +69,95 @@ def draw_game_screen():
         pygame.draw.rect(screen, GRAY, (x, y, 20, 20), 2)  # 邊框寬度=2
         # 畫實心血量
         if i < player.health:
-            pygame.draw.rect(screen, RED, (x + 2, y + 2, 16, 16)) 
+            pygame.draw.rect(screen, RED, (x + 2, y + 2, 16, 16))
 
 
     draw_text(f"Distance: {max_distance} m", WIDTH - 250, 10, BLACK)
 
-
-# --- 執行主選單 ---
-show_main_menu()
-start_game()
-
-# --- 遊戲狀態 ---
-paused = False
-game_over = False
+# [while running]
+#     → show_main_menu()
+#     → start_game()
+#     → [while not game_over]
+#         → event loop / update / draw
+#         → 死亡 → show_game_over() → break
+#     → 回到主選單
 running = True
-typed_code = ""
 
 while running:
-    screen.fill(WHITE)
+    
+    show_main_menu()
+    
+    in_game = True
+    while in_game:
+        start_game()
+        paused = False
+        game_over = False
+        typed_code = ""          
+    
+        while not game_over:
+            # --- 按鈕處理 ---
+            for event in pygame.event.get():
+                # 離開遊戲
+                if event.type == pygame.QUIT:
+                    running = False            
+                
+                # 暫停遊戲
+                if event.type == pygame.KEYDOWN:
+                    if paused:
+                        if event.key == pygame.K_ESCAPE:
+                            paused = False  # 恢復遊戲
+                        elif event.key == pygame.K_q:
+                            pygame.quit()
+                            exit()
 
-    for event in pygame.event.get():
-        # 離開遊戲
-        if event.type == pygame.QUIT:
-            running = False            
-        
-        # 暫停遊戲
-        if event.type == pygame.KEYDOWN:
+                    else:
+                        if event.key == pygame.K_ESCAPE:
+                            paused = True  # 進入暫停選單
+                            
+                    if event.unicode:
+                        typed_code += event.unicode
+                        typed_code = typed_code[-15:] 
+                        if "1234" in typed_code:
+                            entities._dflag_ = True
+                            print("I'm god!")
+                            typed_code = ""
+
+            if not paused:
+                all_sprites.update(tiles, scroll, obstacles)
+            
+            screen.fill(WHITE)
+            draw_game_screen()
+            
             if paused:
-                if event.key == pygame.K_ESCAPE:
-                    paused = False  # 恢復遊戲
-                elif event.key == pygame.K_q:
-                    pygame.quit()
-                    exit()
+                show_pause_menu()            
 
-            elif game_over:
-                if event.key == pygame.K_r:
-                    game_over = False
-                    start_game()
-            else:
-                if event.key == pygame.K_ESCAPE:
-                    paused = True  # 進入暫停選單
-                    
-            if event.unicode:
-                typed_code += event.unicode
-                typed_code = typed_code[-15:] 
-                if "1234" in typed_code:
-                    entities._dflag_ = True
-                    print("I'm god!")
-                    typed_code = ""
+            # 生成新地形（當角色接近邊界）
+            right_edge = (generated_chunks * 30 - 10) * TILE_SIZE
+            if player.rect.right > right_edge:
+                new_tiles, new_obs = generate_chunk(generated_chunks * 30)
+                tiles.add(*new_tiles)
+                obstacles.add(*new_obs)
+                generated_chunks += 1
 
-    if paused:
-        draw_game_screen()
-        show_pause_menu()
+            # 計算距離分數
+            distance = player.rect.x // TILE_SIZE
+            max_distance = max(max_distance, distance)
 
-    if not game_over and not paused:
-        all_sprites.update(tiles, scroll, obstacles)
-
-        # 生成新地形（當角色接近邊界）
-        right_edge = (generated_chunks * 30 - 10) * TILE_SIZE
-        if player.rect.right > right_edge:
-            new_tiles, new_obs = generate_chunk(generated_chunks * 30)
-            tiles.add(*new_tiles)
-            obstacles.add(*new_obs)
-            generated_chunks += 1
-
-        # 計算距離分數
-        distance = player.rect.x // TILE_SIZE
-        max_distance = max(max_distance, distance)
-
-        if player.rect.top > HEIGHT or player.health <= 0:
-            end_time = time.time()
-            total_time = end_time - start_time
-            if not entities._dflag_:
-                save_high_score(max_distance)
-            else:
-                print("God not count!")
-            show_game_over(max_distance, total_time, load_high_scores())
-            start_game()  # 加這行：遊戲結束後重開
-            game_over = False  # 加這行：重置狀態
-
-        draw_game_screen()
-
-    pygame.display.flip()
-    clock.tick(60)
+            if player.rect.top > HEIGHT or player.health <= 0:
+                end_time = time.time()
+                total_time = end_time - start_time
+                if not entities._dflag_:
+                    save_high_score(max_distance)
+                else:
+                    print("God not count!")
+                res = show_game_over(max_distance, total_time, load_high_scores())
+                if res == "restart":
+                    break
+                else:
+                    in_game = False
+                    break
+                
+            pygame.display.flip()
+            clock.tick(60)
 
 pygame.quit()
