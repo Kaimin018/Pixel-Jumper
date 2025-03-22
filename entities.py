@@ -1,6 +1,8 @@
 import pygame
 from settings import *
 
+_dflag_ = False
+typed_code = ""
 
 # --- 障礙物類別 ---
 class Obstacle(pygame.sprite.Sprite):
@@ -62,12 +64,13 @@ class Player(pygame.sprite.Sprite):
 
         # 掉出畫面處理：扣血並從上方重生在原本 X 座標
         if self.rect.top > HEIGHT:
-            self.health -= 1
+            if not _dflag_:
+                self.health -= 1
             self.rect.y = -100  # 從畫面上方掉下來
             self.vel_y = 0
 
         # 碰撞障礙物（加上無敵時間）
-        if not self.invincible:
+        if not _dflag_ and not self.invincible:
             for obs in obstacles:
                 if self.rect.colliderect(obs.rect):
                     print("碰到障礙物！", obs.rect.topleft)

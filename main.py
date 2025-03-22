@@ -1,16 +1,23 @@
-__version__ = "0.0.3"
+# Description: 主程式檔案，負責遊戲的初始化、遊戲迴圈、遊戲狀態的管理
 
-import pygame, time
-from settings import *
+# --- Python 標準函式庫 ---
+import os
+import time
+
+# --- 第三方套件 ---
+import pygame
+
+# --- 專案模組 ---
+import entities
 from entities import Player
+from settings import *
 from level import generate_chunk, ensure_starting_platforms
 from ui import show_main_menu, show_game_over, show_pause_menu, draw_text
-import os
+
+
 
 # --- 初始化 ---
 pygame.init()
-WIDTH, HEIGHT = 800, 600
-TILE_SIZE = 40
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 
@@ -52,7 +59,7 @@ def draw_game_screen():
     for obs in obstacles:
         shifted_obs = obs.rect.move(scroll[0], scroll[1])
         screen.blit(obs.image, shifted_obs)
-        pygame.draw.rect(screen, RED, obs.rect.move(scroll[0], 0), 2) # debug，畫出障礙物的碰撞框
+        #pygame.draw.rect(screen, RED, obs.rect.move(scroll[0], 0), 2) # debug，畫出障礙物的碰撞框
 
     screen.blit(player.image, (player.rect.x + scroll[0], player.rect.y + scroll[1]))
 
@@ -70,6 +77,7 @@ start_game()
 paused = False
 game_over = False
 running = True
+typed_code = ""
 
 while running:
     screen.fill(WHITE)
@@ -77,7 +85,8 @@ while running:
     for event in pygame.event.get():
         # 離開遊戲
         if event.type == pygame.QUIT:
-            running = False
+            running = False            
+        
         # 暫停遊戲
         if event.type == pygame.KEYDOWN:
             if paused:
@@ -94,6 +103,14 @@ while running:
             else:
                 if event.key == pygame.K_ESCAPE:
                     paused = True  # 進入暫停選單
+                    
+            if event.unicode:
+                typed_code += event.unicode
+                typed_code = typed_code[-15:] 
+                if "1234" in typed_code:
+                    entities._dflag_ = True
+                    print("I'm god!")
+                    typed_code = ""
 
     if paused:
         draw_game_screen()
@@ -117,7 +134,10 @@ while running:
         if player.rect.top > HEIGHT or player.health <= 0:
             end_time = time.time()
             total_time = end_time - start_time
-            save_high_score(max_distance)
+            if not entities._dflag_:
+                save_high_score(max_distance)
+            else:
+                print("God not count!")
             show_game_over(max_distance, total_time, load_high_scores())
             start_game()  # 加這行：遊戲結束後重開
             game_over = False  # 加這行：重置狀態
