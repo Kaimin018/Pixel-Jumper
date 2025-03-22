@@ -10,6 +10,14 @@ class Obstacle(pygame.sprite.Sprite):
         self.image.fill(GRAY)
         self.rect = self.image.get_rect(topleft=(x, y))
 
+# --- 地形類別 ---
+class Tile(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((TILE_SIZE, TILE_SIZE))
+        self.image.fill(GREEN)
+        self.rect = self.image.get_rect(topleft=(x, y))
+
 
 # --- 玩家類別 ---
 class Player(pygame.sprite.Sprite):
@@ -62,6 +70,7 @@ class Player(pygame.sprite.Sprite):
         if not self.invincible:
             for obs in obstacles:
                 if self.rect.colliderect(obs.rect):
+                    print("碰到障礙物！", obs.rect.topleft)
                     self.health -= 1
                     self.invincible = True
                     self.invincible_timer = pygame.time.get_ticks()
@@ -86,16 +95,18 @@ class Player(pygame.sprite.Sprite):
 
     def collision(self, dx, dy, tiles):
         for tile in tiles:
-            if self.rect.colliderect(tile):
+            if hasattr(tile, "type") and tile.type == "obstacle":
+                continue  # 忽略障礙物
+            if self.rect.colliderect(tile.rect):
                 if dy > 0:  # 玩家往下掉，碰到地板
-                    self.rect.bottom = tile.top
+                    self.rect.bottom = tile.rect.top
                     self.vel_y = 0
                     self.on_ground = True
                     self.jump_count = 0  # 落地時重置跳躍次數
                 elif dy < 0:
-                    self.rect.top = tile.bottom
+                    self.rect.top = tile.rect.bottom
                     self.vel_y = 0
                 elif dx > 0:
-                    self.rect.right = tile.left
+                    self.rect.right = tile.rect.left
                 elif dx < 0:
-                    self.rect.left = tile.right
+                    self.rect.left = tile.rect.right

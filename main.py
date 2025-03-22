@@ -46,12 +46,13 @@ def load_high_scores():
 
 def draw_game_screen():
     for tile in tiles:
-        shifted_tile = tile.move(scroll[0], scroll[1])
+        shifted_tile = tile.rect.move(scroll[0], scroll[1])
         pygame.draw.rect(screen, GREEN, shifted_tile)
 
     for obs in obstacles:
         shifted_obs = obs.rect.move(scroll[0], scroll[1])
         screen.blit(obs.image, shifted_obs)
+        pygame.draw.rect(screen, RED, obs.rect.move(scroll[0], 0), 2) # debug，畫出障礙物的碰撞框
 
     screen.blit(player.image, (player.rect.x + scroll[0], player.rect.y + scroll[1]))
 
@@ -105,8 +106,8 @@ while running:
         right_edge = (generated_chunks * 30 - 10) * TILE_SIZE
         if player.rect.right > right_edge:
             new_tiles, new_obs = generate_chunk(generated_chunks * 30)
-            tiles += new_tiles
-            obstacles += new_obs
+            tiles.add(*new_tiles)
+            obstacles.add(*new_obs)
             generated_chunks += 1
 
         # 計算距離分數

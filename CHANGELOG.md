@@ -1,3 +1,30 @@
+## v0.2.0 - 開發中
+- feat: 地形生成邏輯提升為可支持多層與隨機變化
+- feat: 補血機制與血量上限系統初版完成
+### ✨ Features
+- Rebuilt procedural level generation system using `Tile` and `Obstacle` sprite-based architecture.
+- Added dynamic platform width and height variation based on difficulty level.
+- Introduced floating platforms and stair-like structures to enrich terrain diversity.
+
+### 🛠 Improvements
+- Implemented `occupied_tiles` tracking system to prevent overlapping between platforms, stairs, and obstacles.
+- Refactored all tile generation functions (`add_base_platform`, `add_floating_platforms`, `add_stairs`) for modularity and consistency.
+- Improved obstacle placement logic to ensure obstacles are not placed at walkable platform level.
+- Removed outdated `level[][]` array-based tile structure in favor of full sprite group management.
+
+### 🐞 Bug Fixes
+- Fixed issue where player could stand on obstacles due to overlapping tile placement.
+
+## v0.1.0 - 2025-03-22
+- feat: 實作角色移動、跳躍、雙跳邏輯
+- feat: 隨機生成平台與初步障礙（刺）
+- feat: 遊戲暫停 / 結束 / 重新開始功能
+- feat: 角色死亡與生命值
+- feat: 背景音樂與音效初步整合
+- feat: 高分儲存、排行榜顯示
+- feat: ESC 暫停、Q 離開、R 重新開始控制鍵位
+- chore: 新增 .gitignore
+
 ## v0.0.3 - 2025-03-22
 - 加入不同背景音樂
 
