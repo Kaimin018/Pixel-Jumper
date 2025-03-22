@@ -1,3 +1,5 @@
+__version__ = "0.0.3"
+
 import pygame, time
 from settings import *
 from entities import Player
