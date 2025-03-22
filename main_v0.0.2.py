@@ -14,13 +14,14 @@ clock = pygame.time.Clock()
 
 # --- 音樂 ---
 pygame.mixer.init()
-pygame.mixer.music.load("CDMIxVintage.mp3")
-pygame.mixer.music.play(-1)  # 無限循環播放
 
 
 def start_game():
     global tiles, obstacles, player, all_sprites, scroll, start_time, max_distance, generated_chunks
     tiles, obstacles = generate_chunk(0)
+    
+    pygame.mixer.music.load("Title_Screen.wav")
+    pygame.mixer.music.play(-1)
     ensure_starting_platforms(tiles)  # 確保前五格有平台可站
     player = Player(100, 100)
     all_sprites = pygame.sprite.Group(player)
@@ -42,19 +43,6 @@ def load_high_scores():
     with open("highscores.txt", "r") as f:
         lines = f.readlines()
         return sorted([int(line.strip()) for line in lines], reverse=True)[:5]
-
-
-# --- 遊戲初始化 ---
-def start_game():
-    global tiles, obstacles, player, all_sprites, scroll, start_time, max_distance, generated_chunks
-    tiles, obstacles = generate_chunk(0)
-    ensure_starting_platforms(tiles)  # 確保前五格有平台可站
-    player = Player(100, 100)
-    all_sprites = pygame.sprite.Group(player)
-    scroll = [0, 0]
-    start_time = time.time()
-    max_distance = 0
-    generated_chunks = 1
 
 
 def draw_game_screen():

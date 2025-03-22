@@ -14,11 +14,14 @@ GRAY = (100, 100, 100)
 LIGHT_GRAY = (200, 200, 200)
 NORMAL_GRAY= (150, 150, 150)
 ORANGE = (255, 165, 0)
+KEY_HIGHLIGHT = (100, 180, 255)
 
 
 # --- 字型 ---
 pygame.font.init()
-font = pygame.font.SysFont(None, 48)
-font_large = pygame.font.SysFont(None, 72)  # 定義大字型
-font_medium = pygame.font.SysFont(None, 48)  # 定義中等字型
-font_small = pygame.font.SysFont(None, 32)  # 定義小字型
+FONT_PATH = "fonts/DejaVuSans.ttf"
+font = pygame.font.Font(FONT_PATH, 20)
+font_large = pygame.font.Font(FONT_PATH, 60)    # 定義大字型
+font_medium = pygame.font.Font(FONT_PATH, 30)   # 定義中等字型
+font_small = pygame.font.Font(FONT_PATH, 20)    # 定義小字型
+
