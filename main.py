@@ -277,7 +277,7 @@ def start_game():
 def show_pause_menu():
     # 繪製半透明遮罩
     overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
-    overlay.fill((0, 0, 0, 128))  # 黑色 + 透明度
+    overlay.fill((0, 0, 0, 32))  # 黑色 + 透明度
     screen.blit(overlay, (0, 0))
 
     # 顯示暫停文字與說明
@@ -323,6 +323,23 @@ def start_game():
     generated_chunks = 1
 
 
+def draw_game_screen():
+    for tile in tiles:
+        shifted_tile = tile.move(scroll[0], scroll[1])
+        pygame.draw.rect(screen, GREEN, shifted_tile)
+
+    for obs in obstacles:
+        shifted_obs = obs.rect.move(scroll[0], scroll[1])
+        screen.blit(obs.image, shifted_obs)
+
+    screen.blit(player.image, (player.rect.x + scroll[0], player.rect.y + scroll[1]))
+
+    for i in range(player.health):
+        pygame.draw.rect(screen, RED, (10 + i * 30, 10, 20, 20))
+
+    draw_text(f"Distance: {max_distance} m", WIDTH - 250, 10)
+
+
 # --- 執行主選單 ---
 show_main_menu()
 start_game()
@@ -357,6 +374,7 @@ while running:
                     paused = True  # 進入暫停選單
 
     if paused:
+        draw_game_screen()
         show_pause_menu()
 
     if not game_over and not paused:
@@ -375,28 +393,14 @@ while running:
         max_distance = max(max_distance, distance)
 
         if player.rect.top > HEIGHT or player.health <= 0:
-            game_over = True
             end_time = time.time()
             total_time = end_time - start_time
             save_high_score(max_distance)
             show_game_over(max_distance, total_time, load_high_scores())
+            start_game()  # 加這行：遊戲結束後重開
+            game_over = False  # 加這行：重置狀態
 
-        for tile in tiles:
-            shifted_tile = tile.move(scroll[0], scroll[1])
-            pygame.draw.rect(screen, GREEN, shifted_tile)
-
-        for obs in obstacles:
-            shifted_obs = obs.rect.move(scroll[0], scroll[1])
-            screen.blit(obs.image, shifted_obs)
-
-        screen.blit(
-            player.image, (player.rect.x + scroll[0], player.rect.y + scroll[1])
-        )
-
-        for i in range(player.health):
-            pygame.draw.rect(screen, RED, (10 + i * 30, 10, 20, 20))
-
-        draw_text(f"Distance: {max_distance} m", 520, 10)
+        draw_game_screen()
 
     pygame.display.flip()
     clock.tick(60)
