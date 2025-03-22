@@ -76,14 +76,15 @@ def show_about_screen():
     screen = pygame.display.get_surface()
     while True:
         screen.fill((20, 20, 20))
-
+        x = 40
         draw_centered_text("ABOUT / CREDITS", 60, (255, 255, 0), font_large)
         draw_centered_text("Game: Pixel Jumper", 140, WHITE, font_medium)
         draw_centered_text("Created by: Kaimin Liao", 180, WHITE, font_medium)
 
-        draw_centered_text("Music: 'Title Screen' by Juhani Junkala", 240, LIGHT_GRAY, font_small)
-        draw_centered_text("Licensed under CC BY 4.0", 270, LIGHT_GRAY, font_small)
-        draw_centered_text("https://opengameart.org/content/5-chiptunes-action", 300, LIGHT_GRAY, font_small)
+        draw_text_left("Music from uǝɥM, Juhani Junkala & Matthew Pablo", x, 240, LIGHT_GRAY, font_small)
+        draw_text_left("Licensed under CC BY 4.0",x,  270, LIGHT_GRAY, font_small)
+        draw_text_left("- https://opengameart.org", x, 300, LIGHT_GRAY, font_small)
+        draw_text_left("- https://www.bandlab.com", x,  330, LIGHT_GRAY, font_small)
 
         draw_centered_text("Press B to go back", 460, NORMAL_GRAY, font_small)
 
@@ -172,8 +173,9 @@ def show_game_over(distance, total_time, highscores):
         draw_centered_text(f"Distance: {distance} m", 180, WHITE, font_medium)
         draw_centered_text(f"Time: {int(total_time)} s", 230, LIGHT_GRAY, font_medium)
         draw_centered_text("Top 5 Scores:", 290, (255, 255, 0), font_medium)
-        for i, score in enumerate(highscores):
-            draw_centered_text(f"{i+1}. {score} m", 330 + i * 30, WHITE, font_small)
+        for i, entry in enumerate(highscores):
+            score_text = f"{i+1}. {entry['score']} m - {entry['time']}s"
+            draw_centered_text(score_text, 330 + i * 30, WHITE, font_small)
         draw_centered_text("Press R to Restart", 500, LIGHT_GRAY, font_small)
         draw_centered_text("Press B back to Main Manu", 550, LIGHT_GRAY, font_small)
 

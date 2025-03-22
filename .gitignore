@@ -16,7 +16,7 @@ venv/
 Thumbs.db
 
 # playing records
-highscores.txt
+highscores.json
 
 # document
 todo.md

@@ -2,6 +2,37 @@
 - feat: 地形生成邏輯提升為可支持多層與隨機變化
 - feat: 補血機制與血量上限系統初版完成
 
+## [v0.2.2] - 2025-03-23
+git tag -a v0.2.2 -m "Stable version with GameState, UI overhaul, debug mode, JSON highscores"
+
+### ✨ Features
+- feat: introduce GameState class to encapsulate global game variables
+- feat: enable R key to restart game instantly from game over screen
+- feat: implement developer debug mode (via secret key input)
+- feat: exclude debug scores from highscore leaderboard
+- feat: convert highscore storage to JSON format with score, time, and mode
+- feat: highlight key actions in menu with draw_key_highlight_line()
+- feat: allow pausing game with ESC and displaying semi-transparent overlay
+- feat: show player health with border + filled hearts (max health mechanic)
+
+### 🛠 Improvements
+- refactor: replace global variables with GameState encapsulation
+- refactor: modularize draw_game_screen and game loop logic
+- refactor: enhance level generation functions and prevent overlapping obstacles
+- refactor: reorganize code into ui.py, level.py, entities.py for clarity
+- ui: improve main menu layout and help screen with Unicode arrow keys
+- ui: show debug message when debug score is not saved
+
+### 🐞 Bug Fixes
+- fix: player could stand on obstacles (obstacles treated as platforms)
+- fix: game crashes on restart due to uninitialized max_distance
+- fix: prevent jump-reset bug when jumping while falling
+- fix: restart from game over no longer returns to wrong screen state
+
+### ⚠ Breaking Changes
+- change: highscore.txt is deprecated, now using highscores.json
+
+
 ## [v0.2.1] - 2025-03-22
 
 ### ✨ Features
