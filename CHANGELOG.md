@@ -2,6 +2,16 @@
 - feat: 地形生成邏輯提升為可支持多層與隨機變化
 - feat: 補血機制與血量上限系統初版完成
 
+## [v0.2.3] - 2025-03-23
+fix: use GameState.generated_chunks instead of local variable
+
+Previously, terrain generation used a separate global `generated_chunks` counter,
+which desynchronized from the actual GameState and caused missing tiles in later chunks.
+This change ensures chunk tracking is fully tied to GameState.
+
+BREAKING CHANGE: Removed global `generated_chunks`, replaced all references with `state.generated_chunks`.
+
+
 ## [v0.2.2] - 2025-03-23
 
 ### ✨ Features
