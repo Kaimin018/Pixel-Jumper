@@ -1,5 +1,5 @@
 import pygame
-from settings import *
+from game.settings import *
 
 _dflag_ = False
 typed_code = ""

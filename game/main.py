@@ -2,18 +2,18 @@
 
 # --- Python 標準函式庫 ---
 import os
+import json
 import time
 
 # --- 第三方套件 ---
 import pygame
-import json
 
 # --- 專案模組 ---
-import entities
-from entities import Player
-from settings import *
-from level import generate_chunk, ensure_starting_platforms
-from ui import show_main_menu, show_game_over, show_pause_menu, draw_text
+import game.entities as entities
+from game.entities import Player
+from game.settings import *
+from game.level import generate_chunk, ensure_starting_platforms
+from common.ui import show_main_menu, show_game_over, show_pause_menu, draw_text
 
 class GameState:
     def __init__(self):
@@ -118,8 +118,7 @@ def main():
 #         → event loop / update / draw
 #         → 死亡 → show_game_over() → break
 #     → 回到主選單
-    
-    generated_chunks = 1     
+         
     running = True
 
     while running:
@@ -172,12 +171,13 @@ def main():
                     show_pause_menu()            
 
                 # 生成新地形（當角色接近邊界）
-                right_edge = (generated_chunks * 30 - 10) * TILE_SIZE
+                right_edge = (state.generated_chunks * 30 - 10) * TILE_SIZE
+                # pygame.draw.line(screen, RED, (right_edge + state.scroll[0], 0), (right_edge + state.scroll[0], HEIGHT), 2)   # debug，畫出右邊界
                 if state.player.rect.right > right_edge:
-                    new_tiles, new_obs = generate_chunk(generated_chunks * 30)
+                    new_tiles, new_obs = generate_chunk(state.generated_chunks * 30)
                     state.tiles.add(*new_tiles)
                     state.obstacles.add(*new_obs)
-                    generated_chunks += 1
+                    state.generated_chunks += 1
 
                 # 計算距離分數
                 distance = state.player.rect.x // TILE_SIZE

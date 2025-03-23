@@ -3,7 +3,6 @@
 - feat: 補血機制與血量上限系統初版完成
 
 ## [v0.2.2] - 2025-03-23
-git tag -a v0.2.2 -m "Stable version with GameState, UI overhaul, debug mode, JSON highscores"
 
 ### ✨ Features
 - feat: introduce GameState class to encapsulate global game variables

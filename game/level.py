@@ -1,7 +1,7 @@
 import pygame
 import random
-from settings import WIDTH, HEIGHT, TILE_SIZE
-from entities import Tile, Obstacle
+from game.settings import WIDTH, HEIGHT, TILE_SIZE
+from game.entities import Tile, Obstacle
 
 
 # --- 地圖生成（延伸） ---
