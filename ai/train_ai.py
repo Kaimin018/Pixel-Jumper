@@ -16,6 +16,14 @@ from ai.env import PixelJumperEnv
 from ai.ai_model import GameAI
 from game.settings import *
 
+def get_model_path_from_json(json_path="models/training_data.json"):
+    if not os.path.exists(json_path):
+        return None
+    with open(json_path, "r") as f:
+        data = json.load(f)
+    episode = data.get("episode", 0)
+    return f"models/dqn_model_episode_{episode}.pth"
+
 def save_training_data(episode, ai, episode_rewards, episode_steps, avg_reward):
     """儲存訓練數據"""
     # 儲存模型
@@ -73,7 +81,7 @@ def train_ai():
     ai = GameAI(device=device)
     
     # 嘗試載入已訓練模型和訓練數據（如果存在）
-    model_path = "models/dqn_model_final.pth"
+    model_path = get_model_path_from_json()
     training_data_path = "models/training_data.json"
     
     if os.path.exists(model_path):
@@ -97,7 +105,7 @@ def train_ai():
     target_update_frequency = 50
     render_frequency = 5
     training_frequency = 2
-    save_frequency = 50  # 每50步儲存一次模型
+    save_frequency = 500  # 每n步儲存一次模型
     
     # 創建儲存模型的目錄
     if not os.path.exists('models'):
@@ -193,6 +201,7 @@ def train_ai():
     # 儲存最終模型和訓練數據
     avg_reward = np.mean(episode_rewards[-100:]) if len(episode_rewards) >= 100 else np.mean(episode_rewards)
     save_training_data(current_episode, ai, episode_rewards, episode_steps, avg_reward)
+    torch.save(ai.model.state_dict(), "models/dqn_model_final.pth")
     env.close()
 
 if __name__ == "__main__":

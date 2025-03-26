@@ -21,6 +21,7 @@ class PixelJumperEnv(gym.Env):
 
         # 定義動作空間 (0 = 不動，1 = 左，2 = 右，3 = 跳)
         self.action_space = spaces.Discrete(4)
+        self.last_x = 0
 
         # 定義觀察空間（8個特徵）
         self.observation_space = spaces.Box(
@@ -31,6 +32,7 @@ class PixelJumperEnv(gym.Env):
 
     def reset(self):
         self.game.initialize()
+        self.last_x = self.game.player.rect.x
         obs = self._get_obs()
         return obs
 
@@ -87,20 +89,24 @@ class PixelJumperEnv(gym.Env):
         return obs
 
     def _get_reward(self):
-        reward = 0
+        # 計算水平位移差作為前進獎勵
+        current_x = self.game.player.rect.x
+        delta_x = current_x - self.last_x
+        self.last_x = current_x
+
+        reward = max(delta_x * 0.08, 0)  # 每往右移一格給 0.1 分，倒退不給分
+
+        if not self.game.player.on_ground:
+            reward -= 0.01  # 空中太久就扣分（防止亂跳）
         
-        # 前進獎勵
-        reward += 0.1
+        reward -= 0.05  # 每步小小扣分，逼它更快學會前進
         
-        # 存活獎勵
-        if self.game.player.on_ground:
-            reward += 0.05
-            
         # 死亡懲罰
         if self.game.game_over:
             reward = -10
             
         return reward
+
 
     def render(self, mode="human"):
         if self.game.screen:

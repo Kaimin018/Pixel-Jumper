@@ -1,4 +1,13 @@
 ## [v0.3.1] - 2025-03-27
+feat(env): 調整 reward 機制以鼓勵水平前進，並移除 final 模型依賴
+
+- reward 現根據玩家 X 軸位移計算，前進越多 reward 越高
+- 加入空中懲罰與每步小扣分，防止亂跳與停滯
+- 加入死亡懲罰 reward = -10，強化訓練效果
+- 重構模型載入邏輯，透過 training_data.json 自動找最新模型
+- 移除 dqn_model_final.pth 依賴，使用 episode 命名統一管理模型
+
+
 feat(ai): 支援 device 傳遞與視窗穩定性處理
 
 - GameAI 類別改為接受外部 device（支援 CUDA / CPU 切換）
