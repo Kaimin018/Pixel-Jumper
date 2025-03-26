@@ -1,3 +1,14 @@
+## [v0.3.1] - 2025-03-27
+feat(ai): 支援 device 傳遞與視窗穩定性處理
+
+- GameAI 類別改為接受外部 device（支援 CUDA / CPU 切換）
+- 修正所有 tensor 操作，確保訓練過程不發生 device mismatch 錯誤
+- 使用 np.array(...) 解決建立 tensor 時的效率警告
+- get_action() 中加入 .to(device) 避免 CPU/GPU 衝突
+- load model 時加入 map_location，確保跨設備載入穩定
+- env.render() 中加入 pygame.event.pump()，避免 PyGame 視窗無回應
+
+
 ## v0.2.0 - 開發中
 - feat: 地形生成邏輯提升為可支持多層與隨機變化
 - feat: 補血機制與血量上限系統初版完成

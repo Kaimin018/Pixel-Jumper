@@ -24,8 +24,8 @@ class PixelJumperEnv(gym.Env):
 
         # 定義觀察空間（8個特徵）
         self.observation_space = spaces.Box(
-            low=np.array([0, 0, -1, 0, 0, 0, 0, 0]),
-            high=np.array([1, 1, 1, 1, 1, 1, 1, 1]),
+            low=np.array([0, 0, -1, 0, 0, 0, 0, 0], dtype=np.float32),
+            high=np.array([1, 1, 1, 1, 1, 1, 1, 1], dtype=np.float32),
             dtype=np.float32
         )
 
@@ -106,6 +106,7 @@ class PixelJumperEnv(gym.Env):
         if self.game.screen:
             self.game.draw()
             pygame.display.flip()
+            pygame.event.pump()
 
     def close(self):
         pygame.quit()

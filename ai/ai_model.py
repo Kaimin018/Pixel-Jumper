@@ -5,6 +5,10 @@ import torch.optim as optim
 from collections import deque
 import random
 from game.settings import *
+import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 class DQN(nn.Module):
     def __init__(self, input_size, output_size):
@@ -19,7 +23,7 @@ class DQN(nn.Module):
         return self.fc3(x)
 
 class GameAI:
-    def __init__(self):
+    def __init__(self, device):
         self.state_size = 8  # 玩家位置(x,y)、速度(x,y)、是否在地面、跳跃次数、最近平台距离、最近障碍物距离
         self.action_size = 3  # 左移、右移、跳跃
         self.memory = deque(maxlen=10000)
@@ -28,8 +32,9 @@ class GameAI:
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.995
         self.learning_rate = 0.001
-        self.model = DQN(self.state_size, self.action_size)
-        self.target_model = DQN(self.state_size, self.action_size)
+        self.device = device
+        self.model = DQN(self.state_size, self.action_size).to(self.device)
+        self.target_model = DQN(self.state_size, self.action_size).to(self.device)
         self.optimizer = optim.Adam(self.model.parameters(), lr=self.learning_rate)
         
     def get_state(self, player, tiles, obstacles):
@@ -64,7 +69,7 @@ class GameAI:
             return random.randrange(self.action_size)
         
         with torch.no_grad():
-            state = torch.FloatTensor(state).unsqueeze(0)
+            state = torch.FloatTensor(state).unsqueeze(0).to(self.device)
             q_values = self.model(state)
             return q_values.argmax().item()
     
@@ -73,14 +78,14 @@ class GameAI:
             return
         
         minibatch = random.sample(self.memory, batch_size)
-        states = torch.FloatTensor([data[0] for data in minibatch])
-        actions = torch.LongTensor([data[1] for data in minibatch])
-        rewards = torch.FloatTensor([data[2] for data in minibatch])
-        next_states = torch.FloatTensor([data[3] for data in minibatch])
-        dones = torch.FloatTensor([data[4] for data in minibatch])
+        states = torch.FloatTensor(np.array([data[0] for data in minibatch])).to(self.device)
+        actions = torch.LongTensor([data[1] for data in minibatch]).to(self.device)
+        rewards = torch.FloatTensor([data[2] for data in minibatch]).to(self.device)
+        next_states = torch.FloatTensor([data[3] for data in minibatch]).to(self.device)
+        dones = torch.FloatTensor([data[4] for data in minibatch]).to(self.device)
         
         current_q_values = self.model(states).gather(1, actions.unsqueeze(1))
-        next_q_values = self.target_model(next_states).max(1)[0].detach()
+        next_q_values = self.target_model(next_states).max(1)[0].detach().to(self.device)
         target_q_values = rewards + (1 - dones) * self.gamma * next_q_values
         
         loss = nn.MSELoss()(current_q_values.squeeze(), target_q_values)
@@ -100,7 +105,7 @@ class GameAI:
         
     def load(self, path):
         if os.path.exists(path):
-            self.model.load_state_dict(torch.load(path))
+            self.model.load_state_dict(torch.load(path, map_location=self.device))
             self.target_model.load_state_dict(self.model.state_dict())
             print(f"✅ 已載入模型：{path}")
         else:
