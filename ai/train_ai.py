@@ -100,12 +100,12 @@ def train_ai():
     
     # 訓練參數
     batch_size = 64
-    episodes = 1000
+    episodes = 50000
     max_steps = 1000
     target_update_frequency = 50
     render_frequency = 5
     training_frequency = 2
-    save_frequency = 500  # 每n步儲存一次模型
+    save_every_n_episodes  = 1000  # 每n步儲存一次模型
     
     # 創建儲存模型的目錄
     if not os.path.exists('models'):
@@ -151,10 +151,6 @@ def train_ai():
             if steps % target_update_frequency == 0:
                 ai.update_target_model()
             
-            # 每50步儲存一次模型
-            if steps % save_frequency == 0:
-                torch.save(ai.model.state_dict(), f'models/dqn_model_step_{steps}.pth')
-            
             # 渲染
             if steps % render_frequency == 0:
                 env.render()
@@ -173,9 +169,9 @@ def train_ai():
         episode_rewards.append(total_reward)
         episode_steps.append(steps)
         
-        # 每回合都儲存訓練數據
-        avg_reward = np.mean(episode_rewards[-100:]) if len(episode_rewards) >= 100 else np.mean(episode_rewards)
-        save_training_data(episode, ai, episode_rewards, episode_steps, avg_reward)
+        if (episode + 1) % save_every_n_episodes  == 0:
+            avg_reward = np.mean(episode_rewards[-100:]) if len(episode_rewards) >= 100 else np.mean(episode_rewards)
+            save_training_data(episode, ai, episode_rewards, episode_steps, avg_reward)
         
         # 計算平均獎勵和步數
         avg_reward = np.mean(episode_rewards[-100:]) if len(episode_rewards) >= 100 else np.mean(episode_rewards)
@@ -185,7 +181,9 @@ def train_ai():
         elapsed_time = time.time() - start_time
         episodes_per_hour = (episode + 1) / (elapsed_time / 3600)
         
-        print(f"回合: {episode + 1}/{episodes}, "
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        print(f"[{current_time}] 回合: {episode + 1}/{episodes}, "
               f"總獎勵: {total_reward:.2f}, "
               f"步數: {steps}, "
               f"探索率: {ai.epsilon:.2f}, "

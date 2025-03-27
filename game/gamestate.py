@@ -21,6 +21,7 @@ class GameState:
         self.clock = pygame.time.Clock()
         self.paused = False
         self.game_over = False
+        self.air_time = 0
         
     def initialize(self):
         """初始化游戏状态"""
@@ -34,6 +35,7 @@ class GameState:
         self.generated_chunks = 1
         self.paused = False
         self.game_over = False
+        self.air_time = 0
         
     def get_state(self):
         """获取当前游戏状态，供AI使用"""
@@ -67,6 +69,12 @@ class GameState:
             # 检查游戏结束条件
             if self.player.rect.top > HEIGHT or self.player.health <= 0:
                 self.game_over = True
+                
+            if not self.player.on_ground:
+                self.air_time += 1
+            else:
+                self.air_time = 0
+
                 
     def draw(self):
         """绘制游戏画面"""

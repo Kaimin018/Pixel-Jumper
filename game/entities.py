@@ -74,7 +74,7 @@ class Player(pygame.sprite.Sprite):
         if not _dflag_ and not self.invincible:
             for obs in obstacles:
                 if self.rect.colliderect(obs.rect):
-                    print("碰到障礙物！", obs.rect.topleft)
+                    # print("碰到障礙物！", obs.rect.topleft)
                     self.health -= 1
                     self.invincible = True
                     self.invincible_timer = pygame.time.get_ticks()
