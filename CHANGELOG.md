@@ -1,4 +1,9 @@
-## [v0.3.2] - 2025-03-27
+## [v1.0.0] - 2025-03-27
+
+fix(ai): 修正 GameAI 缺少 load() 方法導致模型讀取錯誤
+feat(play): 新增 play_with_ai.py，載入已訓練模型自動進行遊戲
+
+
 feat(logging): 加入 loss 記錄與平均損失寫入 CSV
 
 - GameAI.train() 現在回傳 loss 值

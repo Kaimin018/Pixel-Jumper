@@ -88,6 +88,8 @@ def train_ai():
     losses = []
     start_episode = 0    
 
+    
+    
     if os.path.exists(f"{model_dir}/training_data.json"):
         with open(f"{model_dir}/training_data.json", "r") as f:
             data = json.load(f)
@@ -106,10 +108,10 @@ def train_ai():
     render_frequency = 5
     training_frequency = 2
     save_every_n_episodes  = 1000  # 每n步儲存一次模型
-    
+        
     model_path = f"{model_dir}/dqn_model_episode_{start_episode}.pth"
     if os.path.exists(model_path):
-        ai.load(model_path)
+        ai.load_model(model_path)
         print(f"✅ 已載入模型參數：{model_path}")
     
     # 記錄訓練統計資訊
@@ -201,7 +203,7 @@ def train_ai():
               f"訓練速度: {episodes_per_hour:.1f}回合/小時")
         
         # 如果平均獎勵足夠好，提前結束訓練
-        if avg_reward > 100 and len(episode_rewards) >= 100:
+        if avg_reward > 500 and len(episode_rewards) >= 100:
             print("訓練完成!AI表現足夠好。")
             break
     

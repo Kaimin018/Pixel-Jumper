@@ -64,8 +64,8 @@ class GameAI:
         ])
         return state
     
-    def get_action(self, state):
-        if random.random() < self.epsilon:
+    def get_action(self, state, force_exploit=False):
+        if (not force_exploit) and (random.random() < self.epsilon):
             return random.randrange(self.action_size)
         
         with torch.no_grad():
