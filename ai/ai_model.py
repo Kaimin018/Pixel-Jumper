@@ -25,7 +25,7 @@ class DQN(nn.Module):
 class GameAI:
     def __init__(self, device):
         self.state_size = 8  # 玩家位置(x,y)、速度(x,y)、是否在地面、跳跃次数、最近平台距离、最近障碍物距离
-        self.action_size = 3  # 左移、右移、跳跃
+        self.action_size = 4  # 左移、右移、跳跃、不動
         self.memory = deque(maxlen=10000)
         self.gamma = 0.95    # 折扣因子
         self.epsilon = 1.0   # 探索率
@@ -97,13 +97,55 @@ class GameAI:
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
     
+    def train_episodes(self, env, episodes=2000, max_steps=1000, batch_size=64, reward_version="default"):
+        best_avg_reward = -float("inf")
+        reward_history = []
+
+        save_dir = f"checkpoints/{reward_version}"
+        os.makedirs(save_dir, exist_ok=True)
+
+        for ep in range(episodes):
+            state = env.reset()
+            total_reward = 0
+
+            for step in range(max_steps):
+                action = self.get_action(state)
+                next_state, reward, done, _ = env.step(action)
+
+                self.remember(state, action, reward, next_state, done)
+                self.train(batch_size)  # 單步訓練
+                state = next_state
+                total_reward += reward
+
+                if done:
+                    break
+
+            reward_history.append(total_reward)
+
+            if (ep + 1) % 10 == 0:
+                self.update_target_model()
+
+            avg_reward = np.mean(reward_history[-50:])
+            print(f"[EP {ep}] Reward: {total_reward:.2f} | Avg50: {avg_reward:.2f} | Epsilon: {self.epsilon:.3f}")
+
+            if avg_reward > best_avg_reward:
+                best_avg_reward = avg_reward
+                self.save_model(ep, avg_reward, reward_version)
+
+    
     def update_target_model(self):
         self.target_model.load_state_dict(self.model.state_dict())
     
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done)) 
-        
-    def load(self, path):
+            
+    def save_model(self, episode, avg_reward, reward_version):
+        save_dir = f"checkpoints/{reward_version}"
+        os.makedirs(save_dir, exist_ok=True)
+        torch.save(self.model.state_dict(), f"{save_dir}/best_ep{episode}_reward{avg_reward:.2f}.pth")
+        print(f"✅ 模型已儲存：{save_dir}/best_ep{episode}_reward{avg_reward:.2f}.pth")
+
+    def load_model(self, path):
         if os.path.exists(path):
             self.model.load_state_dict(torch.load(path, map_location=self.device))
             self.target_model.load_state_dict(self.model.state_dict())

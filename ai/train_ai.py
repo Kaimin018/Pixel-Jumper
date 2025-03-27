@@ -26,8 +26,13 @@ def get_model_path_from_json(json_path="models/training_data.json"):
 
 def save_training_data(episode, ai, episode_rewards, episode_steps, avg_reward):
     """儲存訓練數據"""
+    
+    REWARD_VERSION = "v2-platform-tune"
+    model_dir = f"models/{REWARD_VERSION}"
+    os.makedirs(model_dir, exist_ok=True)
+    
     # 儲存模型
-    torch.save(ai.model.state_dict(), f'models/dqn_model_episode_{episode+1}.pth')
+    torch.save(ai.model.state_dict(), f"{model_dir}/dqn_model_episode_{episode+1}.pth")
     
     # 儲存訓練統計資訊
     training_data = {
@@ -39,14 +44,14 @@ def save_training_data(episode, ai, episode_rewards, episode_steps, avg_reward):
         'timestamp': time.strftime("%Y-%m-%d %H:%M:%S")
     }
     
-    with open('models/training_data.json', 'w') as f:
+    with open(f'{model_dir}/training_data.json', 'w') as f:
         json.dump(training_data, f)
     
     # 儲存CSV格式的訓練數據
     csv_filename = 'models/training_history.csv'
     file_exists = os.path.exists(csv_filename)
     
-    with open(csv_filename, 'a', newline='') as f:
+    with open(f'{model_dir}/training_history.csv', 'a', newline='') as f:
         writer = csv.writer(f)
         if not file_exists:
             # 寫入表頭
@@ -80,23 +85,29 @@ def train_ai():
     # 初始化AI
     ai = GameAI(device=device)
     
+    best_avg_reward = -float("inf")
+    
     # 嘗試載入已訓練模型和訓練數據（如果存在）
     model_path = get_model_path_from_json()
     training_data_path = "models/training_data.json"
     
-    if os.path.exists(model_path):
-        ai.load(model_path)
-        if os.path.exists(training_data_path):
-            with open(training_data_path, 'r') as f:
-                training_data = json.load(f)
-                episode_rewards = training_data['episode_rewards']
-                episode_steps = training_data['episode_steps']
-                start_episode = training_data['episode']
-                print(f"從第 {start_episode} 回合繼續訓練")
-    else:
-        episode_rewards = []
-        episode_steps = []
-        start_episode = 0
+    episode_rewards = []
+    episode_steps = []
+    start_episode = 0
+    
+    # 計算平均獎勵和步數
+    avg_reward = np.mean(episode_rewards[-100:]) if len(episode_rewards) >= 100 else np.mean(episode_rewards)
+    avg_steps = np.mean(episode_steps[-100:]) if len(episode_steps) >= 100 else np.mean(episode_steps)
+
+    # 儲存最佳模型
+    if avg_reward > best_avg_reward:
+        best_avg_reward = avg_reward
+        REWARD_VERSION = "v2-platform-tune"
+        model_dir = f"models/{REWARD_VERSION}"
+        os.makedirs(model_dir, exist_ok=True)
+        torch.save(ai.model.state_dict(), f"{model_dir}/best_model.pth")
+        print(f"✅ 新最佳模型!AvgReward = {avg_reward:.2f}，已儲存。")
+        
     
     # 訓練參數
     batch_size = 64
@@ -175,6 +186,10 @@ def train_ai():
         
         # 計算平均獎勵和步數
         avg_reward = np.mean(episode_rewards[-100:]) if len(episode_rewards) >= 100 else np.mean(episode_rewards)
+        if avg_reward > best_avg_reward:
+            best_avg_reward = avg_reward
+            torch.save(ai.model.state_dict(), f"{model_dir}/best_model.pth")
+            print(f"✅ 新最佳模型! AvgReward = {avg_reward:.2f}，已儲存。")
         avg_steps = np.mean(episode_steps[-100:]) if len(episode_steps) >= 100 else np.mean(episode_steps)
         
         # 計算訓練時間
