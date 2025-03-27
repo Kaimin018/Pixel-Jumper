@@ -75,7 +75,7 @@ class GameAI:
     
     def train(self, batch_size):
         if len(self.memory) < batch_size:
-            return
+            return None
         
         minibatch = random.sample(self.memory, batch_size)
         states = torch.FloatTensor(np.array([data[0] for data in minibatch])).to(self.device)
@@ -96,6 +96,8 @@ class GameAI:
         
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
+        
+        return loss.item()
     
     def train_episodes(self, env, episodes=2000, max_steps=1000, batch_size=64, reward_version="default"):
         best_avg_reward = -float("inf")

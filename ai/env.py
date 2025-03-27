@@ -33,6 +33,7 @@ class PixelJumperEnv(gym.Env):
     def reset(self):
         self.game.initialize()
         self.steps = 0
+        self.prev_health = self.game.player.health
         self.last_x = self.game.player.rect.x
         obs = self._get_obs()
         return obs
@@ -102,6 +103,14 @@ class PixelJumperEnv(gym.Env):
         
         reward = 0.0
         
+        # 獲取最近平台和障礙物的距離
+        nearest_obstacle = float('inf')
+        for obs in self.game.obstacles:
+            if obs.rect.top > self.game.player.rect.bottom:
+                dist = abs(obs.rect.centerx - self.game.player.rect.centerx)
+                nearest_obstacle = min(nearest_obstacle, dist)
+
+        
         # 計算水平位移差作為前進獎勵
         current_x = self.game.player.rect.x
         delta_x = current_x - self.last_x
@@ -121,6 +130,13 @@ class PixelJumperEnv(gym.Env):
         if self._is_near_platform():
             reward += 0.02
                 
+        if self.prev_health > self.game.player.health:
+            reward -= 0.2  # 撞到障礙物 → 扣分
+        self.prev_health = self.game.player.health
+        
+        if self.prev_health == self.game.player.health and nearest_obstacle < 50:
+            reward += 0.05  # 離障礙物近但沒受傷 → 鼓勵躲避行為
+        
         # 死亡懲罰
         if self.game.game_over:
             reward = -10

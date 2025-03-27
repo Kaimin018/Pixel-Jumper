@@ -1,4 +1,13 @@
 ## [v0.3.2] - 2025-03-27
+feat(logging): 加入 loss 記錄與平均損失寫入 CSV
+
+- GameAI.train() 現在回傳 loss 值
+- 在訓練過程中記錄每步 loss 並累積到 losses[]
+- 每次 save_training_data 時計算 avg_loss (近 100 次)
+- 新增 Avg_Loss 欄位至 training_history.csv 表頭與每行資料
+- 加強 early-stage loss 為空時的防呆處理
+
+
 fix(train_ai): 修正未定義變數與最佳模型儲存錯誤，統一訓練資料儲存目錄
 
 - 修改reward定義，提高收斂速度
