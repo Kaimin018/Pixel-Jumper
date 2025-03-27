@@ -1,5 +1,7 @@
 ## [v1.0.0] - 2025-03-27
 
+docs(README_CN): 新增中文版README
+docs(README): 修改語意不順之處
 fix(ai): 修正 GameAI 缺少 load() 方法導致模型讀取錯誤
 feat(play): 新增 play_with_ai.py，載入已訓練模型自動進行遊戲
 

@@ -8,19 +8,12 @@ Jump, double-jump, avoid traps, and survive for as long as possible while the te
 # Features
 
 🧠 AI-inspired level generation: Platforms and terrain are randomly built with increasing complexity.
-
 🕹️ Simple controls: Left, Right, Jump (with double jump support).
-
 ❤️ Health system: You can take multiple hits before dying.
-
-🧱 Smart obstacles: Dynamically placed spikes and blocks to challenge your movement.
-
+🧱 Smart obstacles: Dynamically placed blocks to challenge your movement.
 🛑 Pause system: Hit ESC anytime to pause the game, or press Q to quit.
-
 🏁 Scoring system: Track your farthest distance and survival time.
-
 🏆 Leaderboard: Automatically saves your best runs and shows the top 5 scores.
-
 🎶 Retro-style background music to keep the vibes going.
 
 # Controls
@@ -30,9 +23,8 @@ SPACE	Jump (supports double jump)
 ESC	Pause / Resume
 Q (Paused)	Quit the game
 R (Game Over)	Restart
+
 📦 Ideal For
-Fans of simple but challenging platformers
-
-Developers learning procedural generation or Pygame
-
-Quick arcade sessions with retro aesthetics
+- Fans of simple but challenging platformers
+- Developers learning procedural generation or Pygame
+- Quick arcade sessions with retro aesthetics
