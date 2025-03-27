@@ -1,3 +1,12 @@
+## [v0.3.2] - 2025-03-27
+fix(train_ai): 修正未定義變數與最佳模型儲存錯誤，統一訓練資料儲存目錄
+
+- 修改reward定義，提高收斂速度
+- 修正 episode_rewards 與 avg_reward 未初始化導致的錯誤
+- 將最佳模型儲存邏輯移至訓練過程中正確位置
+- 統一 JSON 與 CSV 訓練資料儲存在 models/{REWARD_VERSION} 資料夾下
+
+
 ## [v0.3.1] - 2025-03-27
 feat(env): 調整 reward 機制以鼓勵水平前進，並移除 final 模型依賴
 
